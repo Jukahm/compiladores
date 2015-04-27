@@ -4,6 +4,7 @@ import java.io.*;
 public class Lexer {
     
     public static int linha = 1;    //Contador de linhas
+    private int EOF = 0;      //Controle final de arquivo
     private char ch = ' ';          //Caractere lido do arquivo
     private FileReader arquivo;
     
@@ -33,7 +34,8 @@ public class Lexer {
     }  
     
     private void readch() throws IOException{
-        ch = (char) arquivo.read();
+        EOF = arquivo.read();
+        ch = (char) EOF;
     }
     
     private boolean readch(char c) throws IOException{
@@ -43,6 +45,7 @@ public class Lexer {
         ch = ' ';
         return true;
     }
+    
     
     public Token scan() throws IOException{
         //Desconsidera delimitadores na entrada
@@ -55,6 +58,55 @@ public class Lexer {
                 break;       
         }
         
+        //Operadores e pontuação.
+        switch(ch){
+            case '=':       if (readch('=')) return Word.equal;
+                            else return new Token("=",Tag.ATRB);
+                
+            case '<':       if (readch('=')) return Word.lessEqual;
+                            else if (readch('>')) return Word.notEqual;
+                            else return new Token("<",Tag.LT);
+                
+            case '>':       if (readch('=')) return Word.greaterEqual;
+                            else return new Token("<",Tag.GT);
+                
+            case ',':       readch();
+                            return new Token(",", Tag.VG);
+                
+            case ';':       readch();
+                            return new Token(";", Tag.PVG);
+                
+            case ':':       readch();
+                            return new Token(":", Tag.DPTS);
+                
+            case '(':       readch();
+                            return new Token("(", Tag.AP);
+             
+            case ')':       readch();
+                            return new Token("(", Tag.FP);
+                
+            case '+':       readch();
+                            return new Token("+", Tag.SUM);
+                
+            case '-':       readch();
+                            return new Token("-", Tag.MIN);
+                
+            case '*':       readch();
+                            return new Token("*", Tag.MUL);
+                
+            case '/':       readch();
+                            return new Token("/", Tag.DIV);
+            
+            case '“':       readch();
+                            return new Token("“", Tag.AASP);
+            
+            case '”':       readch();
+                            return new Token("”", Tag.FASP);
+ 
+        }
+            
+        
+        
         //Números
         if (Character.isDigit(ch)){
             int valor = 0;
@@ -64,7 +116,7 @@ public class Lexer {
             } while (Character.isDigit(ch));
             return new Num(Integer.toString(valor));
         }
-        
+            
         //Identificadores
         if (Character.isLetter(ch)){
             StringBuffer sb = new StringBuffer();
@@ -72,6 +124,10 @@ public class Lexer {
                 sb.append(ch);
                 readch();
             }while(Character.isLetterOrDigit(ch));
+            if (ch != ',' && ch != ';' && ch != ':' && ch != '(' && ch != ')' && ch != '=' && ch != '<' && ch != '>' && ch != ' ' && ch != '+' && ch != '*' && ch != '/' && ch != '-' && ch != '\t' && ch != '\r' && ch != '\b' && ch != '\n' && EOF != -1){
+               System.out.println("ERRO - Token mal formado na linha " + linha);
+               readch();
+            }
             String s = sb.toString();
             Word w = (Word)TabelaSimbolos.words.get(s);
             if(w != null)
@@ -81,35 +137,15 @@ public class Lexer {
             return w;
         }
         
-        //Virgula,PontoVirgula,DoisPontos, AbreParenteses,FechaParenteses
-        if (ch == ','){
-            Word w = new Word(",", Tag.VG);
-            readch();
-            return w;    
-        } else if (ch == ';'){
-            Word w = new Word(";", Tag.PVG);
-            readch();
-            return w;
-        } else if (ch == ':'){
-            Word w = new Word(":", Tag.DPTS);
-            readch();
-            return w;
-        } else if (ch == '('){
-            Word w = new Word("(", Tag.AP);
-            readch();
-            return w;
-        } else if (ch == ')'){
-            Word w = new Word(")", Tag.FP);
-            readch();
-            return w;
-        } else if (ch == '='){
-            Word w = new Word("=", Tag.ATRB);
-            readch();
-            return w;
-        }
         //Caracteres não especificados
         Token t = new Token(""+ch,ch);
+        if (ch != (char)-1)
+            System.out.println("ERRO - Caractere não especificado na linha " + linha);
         ch = ' ';
         return t;
+    }
+    
+    public int getEOF(){
+        return EOF;
     }
 }

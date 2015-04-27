@@ -1,0 +1,11 @@
+declare
+	i, j, k, @total, 1soma: int;
+start
+	i = 4 * (5-3 * 50 / 10;
+	j = i * 10;
+	k = i* j / k;
+	k = 4 + a $;
+	write(i);
+	write(j);
+	write(k);
+end

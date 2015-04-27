@@ -34,6 +34,8 @@ public class Tag {
     public final static int AP = 33;
     public final static int FP = 34;
     public final static int ATRB = 35;
+    public final static int AASP = 36;
+    public final static int FASP = 37;
     
     //Outros tokens
     public final static int NUM = 40;
