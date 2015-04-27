@@ -31,6 +31,9 @@ public class Tag {
     public final static int PVG = 30;
     public final static int VG = 31;
     public final static int DPTS = 32;
+    public final static int AP = 33;
+    public final static int FP = 34;
+    public final static int ATRB = 35;
     
     //Outros tokens
     public final static int NUM = 40;

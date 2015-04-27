@@ -54,6 +54,17 @@ public class Lexer {
             else 
                 break;       
         }
+        
+        //Números
+        if (Character.isDigit(ch)){
+            int valor = 0;
+            do {
+                valor = 10*valor + Character.digit(ch,10);
+                readch();
+            } while (Character.isDigit(ch));
+            return new Num(Integer.toString(valor));
+        }
+        
         //Identificadores
         if (Character.isLetter(ch)){
             StringBuffer sb = new StringBuffer();
@@ -70,7 +81,7 @@ public class Lexer {
             return w;
         }
         
-        //Virgula,PontoVirgula,DoisPontos
+        //Virgula,PontoVirgula,DoisPontos, AbreParenteses,FechaParenteses
         if (ch == ','){
             Word w = new Word(",", Tag.VG);
             readch();
@@ -80,12 +91,24 @@ public class Lexer {
             readch();
             return w;
         } else if (ch == ':'){
-            Word w = new Word(";", Tag.DPTS);
+            Word w = new Word(":", Tag.DPTS);
+            readch();
+            return w;
+        } else if (ch == '('){
+            Word w = new Word("(", Tag.AP);
+            readch();
+            return w;
+        } else if (ch == ')'){
+            Word w = new Word(")", Tag.FP);
+            readch();
+            return w;
+        } else if (ch == '='){
+            Word w = new Word("=", Tag.ATRB);
             readch();
             return w;
         }
         //Caracteres não especificados
-        Token t = new Token(ch);
+        Token t = new Token(""+ch,ch);
         ch = ' ';
         return t;
     }

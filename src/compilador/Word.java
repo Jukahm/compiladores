@@ -32,11 +32,15 @@ public class Word extends Token {
     public static final Word pontoVirgula = new Word(";", Tag.PVG);
     public static final Word virgula = new Word(",", Tag.VG);
     public static final Word doisPontos = new Word(":", Tag.DPTS);
+    public static final Word abreParenteses = new Word(":", Tag.AP);
+    public static final Word fechaParenteses = new Word(":", Tag.FP);
+    public static final Word atribuicao = new Word(":", Tag.ATRB);
+    
     
             
     //Construtor
     public Word (String s, int tag){
-        super(tag);
+        super(s,tag);
         lexema = s;
     }
     

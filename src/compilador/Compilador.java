@@ -7,9 +7,14 @@ public class Compilador {
 
     public static void main(String[] args) throws FileNotFoundException, IOException {
        Lexer lexer = new Lexer("teste1"); 
-       Word t;
-       t = (Word)lexer.scan();
-       System.out.println('<'+t.getLexema()+','+t+'>');
+       int EOF = 65535;
+       Token t;
+       t = lexer.scan();
+       while (t.getTag() != EOF){
+           System.out.println('<'+t.getValor()+','+t.getTag()+'>');
+           t = lexer.scan();
+       }
+       
         
     }
     
