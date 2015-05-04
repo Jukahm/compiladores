@@ -40,4 +40,5 @@ public class Tag {
     //Outros tokens
     public final static int NUM = 40;
     public final static int ID = 41;
+    //public final static int COMENT = 42;
 }

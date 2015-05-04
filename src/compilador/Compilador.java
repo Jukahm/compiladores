@@ -10,7 +10,9 @@ public class Compilador {
        Token t;
        t = lexer.scan();
        while (lexer.getEOF() != -1){
+           if (t != null){
            System.out.println('<'+t.getValor()+','+t.getTag()+'>');
+           }
            t = lexer.scan();
        }
        
