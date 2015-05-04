@@ -1,6 +1,7 @@
 package compilador;
 
 import java.io.*;
+import static java.lang.System.exit;
 
 public class Lexer {
 
@@ -126,17 +127,18 @@ public class Lexer {
                     case ('*')://comentário de varias linhas
                         do{
                             readch();
+                            if(ch == (char)-1){
+                            System.out.println("WARNING! Comentário não encerrado!");
+                            return null;
+                            }
                             if (ch == '\n'){
                                 linha++;
                             }else if (ch == '*'){
                                 if (readch('/')){
                                     return null;
                                 }                                
-                            }else
-                               continue;
-                        }while (ch != '*');
-                        
-                        return null;
+                            }
+                        }while ((EOF != (char)-1));                   
 
                     default:
                         return new Token("/", Tag.DIV);

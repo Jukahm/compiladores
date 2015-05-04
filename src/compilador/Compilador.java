@@ -6,7 +6,7 @@ import java.io.IOException;
 public class Compilador {
 
     public static void main(String[] args) throws FileNotFoundException, IOException {
-       Lexer lexer = new Lexer("teste2"); 
+       Lexer lexer = new Lexer("teste5"); 
        Token t;
        t = lexer.scan();
        while (lexer.getEOF() != -1){
