@@ -1,6 +1,7 @@
 package compilador;
 
 //juka vai ser fuder
+//Juka vai se fuder
 
 public class Word extends Token {
     
