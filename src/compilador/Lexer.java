@@ -2,6 +2,9 @@ package compilador;
 
 import java.io.*;
 import static java.lang.System.exit;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 public class Lexer {
 
@@ -9,6 +12,7 @@ public class Lexer {
     private int EOF = 0;      //Controle final de arquivo
     private char ch = ' ';          //Caractere lido do arquivo
     private FileReader arquivo;
+    private HashMap tabelaReservada = new HashMap();
 
     //Construtor
     public Lexer(String fileName) throws FileNotFoundException {
@@ -18,20 +22,21 @@ public class Lexer {
             System.out.println("Arquivo não encontrado");
             throw e;
         }
-        TabelaSimbolos.words.put(Word.declare.getLexema(), Word.declare);
-        TabelaSimbolos.words.put(Word.start.getLexema(), Word.start);
-        TabelaSimbolos.words.put(Word.end.getLexema(), Word.end);
-        TabelaSimbolos.words.put(Word.tipoInt.getLexema(), Word.tipoInt);
-        TabelaSimbolos.words.put(Word.tipoString.getLexema(), Word.tipoString);
-        TabelaSimbolos.words.put(Word.condIf.getLexema(), Word.condIf);
-        TabelaSimbolos.words.put(Word.then.getLexema(), Word.then);
-        TabelaSimbolos.words.put(Word.condElse.getLexema(), Word.condElse);
-        TabelaSimbolos.words.put(Word.loopDo.getLexema(), Word.loopDo);
-        TabelaSimbolos.words.put(Word.loopWhile.getLexema(), Word.loopWhile);
-        TabelaSimbolos.words.put(Word.read.getLexema(), Word.read);
-        TabelaSimbolos.words.put(Word.write.getLexema(), Word.write);
-        TabelaSimbolos.words.put(Word.or.getLexema(), Word.or);
-        TabelaSimbolos.words.put(Word.and.getLexema(), Word.and);
+
+        tabelaReservada.put(Word.declare.getLexema(), Word.declare);
+        tabelaReservada.put(Word.start.getLexema(), Word.start);
+        tabelaReservada.put(Word.end.getLexema(), Word.end);
+        tabelaReservada.put(Word.tipoInt.getLexema(), Word.tipoInt);
+        tabelaReservada.put(Word.tipoString.getLexema(), Word.tipoString);
+        tabelaReservada.put(Word.condIf.getLexema(), Word.condIf);
+        tabelaReservada.put(Word.then.getLexema(), Word.then);
+        tabelaReservada.put(Word.condElse.getLexema(), Word.condElse);
+        tabelaReservada.put(Word.loopDo.getLexema(), Word.loopDo);
+        tabelaReservada.put(Word.loopWhile.getLexema(), Word.loopWhile);
+        tabelaReservada.put(Word.read.getLexema(), Word.read);
+        tabelaReservada.put(Word.write.getLexema(), Word.write);
+        tabelaReservada.put(Word.or.getLexema(), Word.or);
+        tabelaReservada.put(Word.and.getLexema(), Word.and);
     }
 
     private void readch() throws IOException {
@@ -125,20 +130,20 @@ public class Lexer {
                         linha++;
                         return null;
                     case ('*')://comentário de varias linhas
-                        do{
+                        do {
                             readch();
-                            if(ch == (char)-1){
-                            System.out.println("WARNING! Comentário não encerrado!");
-                            return null;
+                            if (ch == (char) -1) {
+                                System.out.println("WARNING! Comentário não encerrado!");
+                                return null;
                             }
-                            if (ch == '\n'){
+                            if (ch == '\n') {
                                 linha++;
-                            }else if (ch == '*'){
-                                if (readch('/')){
+                            } else if (ch == '*') {
+                                if (readch('/')) {
                                     return null;
-                                }                                
+                                }
                             }
-                        }while ((EOF != (char)-1));                   
+                        } while ((EOF != (char) -1));
 
                     default:
                         return new Token("/", Tag.DIV);
@@ -166,6 +171,10 @@ public class Lexer {
             } catch (Exception e) {
                 System.out.println("Erro! Valor de inteiro maior que o maximo permitido");
             }
+            if (Character.isLetter(ch)) {
+                System.out.println("Erro! Identificador incorreto na linha " + linha);
+            }
+
             return new Num(Integer.toString(valor));
         }
 
@@ -179,18 +188,25 @@ public class Lexer {
                 readch();
             } while (Character.isLetterOrDigit(ch) && count < 20);
             if (ch != ',' && ch != ';' && ch != ':' && ch != '(' && ch != ')' && ch != '=' && ch != '<' && ch != '>' && ch != ' ' && ch != '+' && ch != '*' && ch != '/' && ch != '-' && ch != '\t' && ch != '\r' && ch != '\b' && ch != '\n' && EOF != -1) {
-                System.out.println("ERRO! Unexpected character \"" + ch + "\" na linha " + linha);
+                System.out.println("ERRO - Caractere não especificado \"" + ch + "\" na linha " + linha);
                 readch();
             }
             String s = sb.toString();
             Word w;
-            w = (Word) TabelaSimbolos.words.get(s);
-            if (w != null) {
-                return w; //palavra já existe na HashTable
+            w = (Word) tabelaReservada.get(s);
+            if (w == null) {
+                w = (Word) TabelaSimbolos.words.get(s);
+                if (w != null) {
+                    return w; //palavra já existe na HashTable
+                } else {
+                    w = new Word(s, Tag.ID);
+                    TabelaSimbolos.words.put(s, w);
+                    return w;
+                }
+            } else {
+                w = new Word(s, Tag.ID);
+                return w;
             }
-            w = new Word(s, Tag.ID);
-            TabelaSimbolos.words.put(s, w);
-            return w;
         }
 
         //Caracteres não especificados
@@ -205,4 +221,27 @@ public class Lexer {
     public int getEOF() {
         return EOF;
     }
+
+    public void printTabReservada() {
+        System.out.println("<------ TABELA DE PALAVRAS RESERVADAS ------->");
+        Iterator it = tabelaReservada.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            System.out.println(pair.getKey());
+            it.remove(); // avoids a ConcurrentModificationException
+        }
+
+    }
+    
+    public void printTabSimbolos() {
+        System.out.println("<------ TABELA DE SÍMBOLOS ------->");
+        Iterator it = TabelaSimbolos.words.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            System.out.println(pair.getKey() );
+            it.remove(); // avoids a ConcurrentModificationException
+        }
+
+    }
+
 }
