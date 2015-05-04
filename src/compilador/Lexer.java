@@ -82,7 +82,7 @@ public class Lexer {
                 if (readch('=')) {
                     return Word.greaterEqual;
                 } else {
-                    return new Token("<", Tag.GT);
+                    return new Token(">", Tag.GT);
                 }
 
             case ',':
