@@ -181,7 +181,8 @@ public class Lexer {
                 readch();
             }
             String s = sb.toString();
-            Word w = (Word) TabelaSimbolos.words.get(s);
+            Word w;
+            w = (Word) TabelaSimbolos.words.get(s);
             if (w != null) {
                 return w; //palavra já existe na HashTable
             }
