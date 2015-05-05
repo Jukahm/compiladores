@@ -34,11 +34,11 @@ public class Tag {
     public final static int AP = 33;
     public final static int FP = 34;
     public final static int ATRB = 35;
-    public final static int AASP = 36;
-    public final static int FASP = 37;
-    
+    public final static int LIT = 36;
     //Outros tokens
     public final static int NUM = 40;
     public final static int ID = 41;
     //public final static int COMENT = 42;
+    //Caracteres Não Especificados na Gramática
+    public final static int NESP = 42;
 }

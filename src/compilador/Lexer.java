@@ -149,33 +149,24 @@ public class Lexer {
                         return new Token("/", Tag.DIV);
 
                 }
-
-            case '“':
-                readch();
-                return new Token("“", Tag.AASP);
-
-            case '”':
-                readch();
-                return new Token("”", Tag.FASP);
-
         }
 
         //Números
         if (Character.isDigit(ch)) {
-            int valor = 0;
-            try {
+            StringBuffer valor = new StringBuffer();
                 do {
-                    valor = 10 * valor + Character.digit(ch, 10);
+                    valor.append(ch);
                     readch();
                 } while (Character.isDigit(ch));
-            } catch (Exception e) {
+            if (Float.parseFloat(valor.toString()) > Integer.MAX_VALUE) {
                 System.out.println("Erro! Valor de inteiro maior que o maximo permitido");
+                return new Num(valor.toString());
             }
             if (Character.isLetter(ch)) {
                 System.out.println("Erro! Identificador incorreto na linha " + linha);
             }
 
-            return new Num(Integer.toString(valor));
+            return new Num(valor.toString());
         }
 
         //Identificadores
@@ -187,9 +178,13 @@ public class Lexer {
                 count++;
                 readch();
             } while (Character.isLetterOrDigit(ch) && count < 20);
-            if (ch != ',' && ch != ';' && ch != ':' && ch != '(' && ch != ')' && ch != '=' && ch != '<' && ch != '>' && ch != ' ' && ch != '+' && ch != '*' && ch != '/' && ch != '-' && ch != '\t' && ch != '\r' && ch != '\b' && ch != '\n' && EOF != -1) {
-                System.out.println("ERRO - Caractere não especificado \"" + ch + "\" na linha " + linha);
-                readch();
+            /*if (ch != ',' && ch != ';' && ch != ':' && ch != '(' && ch != ')' && ch != '=' && ch != '<' && ch != '>' && ch != ' ' && ch != '+' && ch != '*' && ch != '/' && ch != '-' && ch != '\t' && ch != '\r' && ch != '\b' && ch != '\n' && EOF != -1) {
+             System.out.println("ERRO - Caractere não especificado \"" + ch + "\" na linha " + linha);
+             return e_identificador(sb);
+             //readch();
+             }*/
+            if(count >= 20){
+                System.out.println("ERRO! Identificador excedeu o número permitido de caracteres!");
             }
             String s = sb.toString();
             Word w;
@@ -207,16 +202,61 @@ public class Lexer {
                 w = new Word(s, Tag.ID);
                 return w;
             }
+            
+        }
+        //Literal 
+        if (ch == '“' || ch == '"') {
+
+            StringBuffer w = new StringBuffer();
+            w.append(ch);
+            readch();
+            do {
+                w.append(ch);
+                readch();
+            } while ((ch != '”') && (ch != '"') && (ch != (char) -1));
+            if (ch == (char) -1) {
+                System.out.println("ERRO! String literal não finalizada!");
+                return null;
+            } else {
+                w.append(ch);
+            }
+            readch();
+            return new Token(w.toString(), Tag.LIT);
         }
 
         //Caracteres não especificados
-        Token t = new Token("" + ch, ch);
         if (ch != (char) -1) {
-            System.out.println("ERRO - Caractere não especificado na linha " + linha);
+            System.out.println("ERRO - Caractere não especificado na linha " + linha + " ch: \"" + ch + "\".");
+            Token t = new Token("" + ch, Tag.NESP);
+            readch();
+            return t;
+
         }
+        Token t = new Token("" + ch, ch);
         ch = ' ';
         return t;
     }
+
+    //Verifica se identificador já existe em algum tabela 
+    //E insere na tabela caso seja necessário
+    /*public Word e_identificador(StringBuffer sb) {
+        String s = sb.toString();
+        Word w;
+        w = (Word) tabelaReservada.get(s);
+        if (w == null) {
+            w = (Word) TabelaSimbolos.words.get(s);
+            if (w != null) {
+                return w; //palavra já existe na HashTable
+            } else {
+                w = new Word(s, Tag.ID);
+                TabelaSimbolos.words.put(s, w);
+                return w;
+            }
+        } else {
+            w = new Word(s, Tag.ID);
+            return w;
+        }
+    }*/
 
     public int getEOF() {
         return EOF;
@@ -232,13 +272,13 @@ public class Lexer {
         }
 
     }
-    
+
     public void printTabSimbolos() {
         System.out.println("<------ TABELA DE SÍMBOLOS ------->");
         Iterator it = TabelaSimbolos.words.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
-            System.out.println(pair.getKey() );
+            System.out.println(pair.getKey());
             it.remove(); // avoids a ConcurrentModificationException
         }
 
