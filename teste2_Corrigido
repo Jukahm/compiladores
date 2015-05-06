@@ -1,0 +1,12 @@
+declare
+a: int;
+b: int;
+nome: string;
+start
+read (a);
+read (nome);
+b = a * a;
+b = b + a/2 * (3 + 5);
+write(nome);
+write(b);
+end

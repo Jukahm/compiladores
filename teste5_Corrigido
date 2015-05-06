@@ -1,0 +1,14 @@
+declare
+/*Este e um programa com*/ if
+j, k: int;
+a, j: real;
+start
+read(j);
+read(k);
+if (k == 0)
+result = j/k
+else
+result = 0
+end;
+write(res);
+end 
