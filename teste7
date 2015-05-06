@@ -2,10 +2,10 @@ declare
 	i, j, k, declare: int;
 start
 	i = 4 ;
-	j = *;
-        t.t=2;
+	j = *;(((*
+        tt=2;
         write(j);
-        write(j).
+        write(j)*/***/
         write("Altura é demais");
 	k = i* j / k;/*
 	k = 4 + a $;
