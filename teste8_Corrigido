@@ -1,12 +1,12 @@
 programa teste8
 declare
-a, b, c: int;
+a,b,c: int;
 result: int;
 start
-read [a];
+read a;
 read (b);
 c = -30;
 a = 15,7;
 wr ite (a+c);
-write (" sucesso!);
+write (" sucesso!");
 end 
