@@ -4,9 +4,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class Compilador {
+public static Lexer lexer;
 
     public static void main(String[] args) throws FileNotFoundException, IOException {
-       Lexer lexer = new Lexer(args[0]); 
+       /*Lexer lexer = new Lexer(args[0]); 
        Token t;
        t = lexer.scan();
        while (lexer.getEOF() != -1){
@@ -16,9 +17,12 @@ public class Compilador {
            t = lexer.scan();
        }
        lexer.printTabSimbolos();
-       
+       */
+        
+        Parser p = new Parser("teste1");
         
     }
+   
     
 }
 

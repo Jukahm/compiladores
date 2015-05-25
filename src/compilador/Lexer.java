@@ -22,7 +22,7 @@ public class Lexer {
             System.out.println("Arquivo não encontrado");
             throw e;
         }
-
+        
         tabelaReservada.put(Word.declare.getLexema(), Word.declare);
         tabelaReservada.put(Word.start.getLexema(), Word.start);
         tabelaReservada.put(Word.end.getLexema(), Word.end);

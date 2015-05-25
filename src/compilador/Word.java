@@ -5,6 +5,7 @@ public class Word extends Token {
     private String lexema = "";
     
     //Palavras-chaves
+    
     public static final Word declare = new Word("declare", Tag.DCL);
     public static final Word start = new Word("start", Tag.STRT);
     public static final Word end = new Word("end", Tag.END);
