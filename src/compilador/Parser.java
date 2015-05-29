@@ -18,7 +18,7 @@ public class Parser {
     private Token tok;
     private Lexer lexer;
     private final String arquivo;
-    private Tag tag;
+    
     
     public Parser(String arquivo) throws IOException  {
         this.arquivo = arquivo;
@@ -37,6 +37,7 @@ public class Parser {
             System.out.println('<'+tok.getValor()+','+tok.getTag()+'>');
             return tok;            
         }else{
+            System.out.println("erro lexer");
             return null;
         }
         
@@ -48,10 +49,12 @@ public class Parser {
     }
     
     void eat (int t) throws IOException{
-        if (tok.getTag() == t) advance();
+        if (tok.getTag() == t){
+            System.out.println("eating: "+tok.getValor());
+            advance();
+        }
         else error("ERRO - EAT");
-    }
-    
+    }    
     void error(String str){
         System.out.println(str);
        
@@ -60,17 +63,52 @@ public class Parser {
     
     void S() throws IOException{
         switch (tok.getTag()){//token getTag retornar int
-            case Tag.DCL: 
-                eat(Tag.ID); eat(Tag.STRT);
-                stmtList(); eat(Tag.END);
+            case Tag.DCL: eat(Tag.DCL);
+                declList(); eat(Tag.STRT);
+                stmtList();
                 break;
             
-            default: error("S()");break;
+            default: error("Default S()");break;
             
         }
     }
-
-    private void stmtList() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+  private void declList() throws IOException{
+      decl(); eat(Tag.PVG);
+      while(tok.getTag()==Tag.ID){
+          declList();
+      }
+  }
+  
+  
+   private void decl() throws IOException{
+       //decl ::= ident-list “:” type
+       identList(); eat(Tag.DPTS); type();
+   }
+    private void identList () throws IOException{
+       //ident-list ::= identifier {"," identifier}
+       eat(Tag.ID);
+       while (tok.getTag()==Tag.VG){
+           eat(Tag.VG); eat (Tag.ID);
+       }
+   }
+   private void type() throws IOException{
+       //type ::= int | string
+       if (tok.getTag()==Tag.INT){
+           eat(Tag.INT);
+       }else if(tok.getTag()==Tag.STRG){
+           eat(Tag.STRG);
+       }
+       else{
+           error("Linha "+lexer.getLinha()+
+                   " -----> Tipo de variavel indeterminado!");
+       }
+   }
+   
+   
+    private void stmtList() throws IOException {
+       stmt(); eat(Tag.PVG);
+    }
+    private void stmt(){
+        
     }
 }

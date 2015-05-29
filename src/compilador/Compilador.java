@@ -19,7 +19,7 @@ public static Lexer lexer;
        lexer.printTabSimbolos();
        */
         
-        Parser p = new Parser("teste1");
+        Parser p = new Parser("teste2");
         
     }
    

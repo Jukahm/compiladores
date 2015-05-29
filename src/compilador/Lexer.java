@@ -199,7 +199,7 @@ public class Lexer {
                     return w;
                 }
             } else {
-                w = new Word(s, Tag.ID);
+                //w = new Word(s, Tag.ID);
                 return w;
             }
             
@@ -284,4 +284,7 @@ public class Lexer {
 
     }
 
+    public int getLinha(){
+        return this.linha;
+    }
 }
