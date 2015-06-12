@@ -6,7 +6,7 @@ import java.io.IOException;
 public class Compilador {
 public static Lexer lexer;
 
-    public static void main(String[] args) throws FileNotFoundException, IOException {
+    public static void main(String[] args) {
        /*Lexer lexer = new Lexer(args[0]); 
        Token t;
        t = lexer.scan();
@@ -18,9 +18,13 @@ public static Lexer lexer;
        }
        lexer.printTabSimbolos();
        */
-        
-        Parser p = new Parser("teste3");
-        
+        try{
+            
+        Parser p = new Parser("teste3_Corrigido");
+        }
+        catch (Exception e){
+            System.out.println ("Erro compilador");
+        }
     }
   
 }

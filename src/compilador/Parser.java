@@ -40,7 +40,7 @@ public class Parser {
             System.out.println('<' + tok.getValor() + ',' + tok.getTag() + '>');
             return tok;
         } else {
-            System.out.println("Fim do arquivo");
+            //tok  = new Word ("end", Tag.END);
             return null;
         }
 
@@ -49,6 +49,10 @@ public class Parser {
     void advance() {
         try {
             tok = getToken();
+            if (tok.getTag() == Tag.NESP) {
+                System.out.println("NESP Léxico");
+                System.exit(0);
+            }
         } catch (Exception e) {
             System.out.println("Fim do arquivo");
         }
@@ -56,10 +60,11 @@ public class Parser {
 
     void eat(int t) {
         try {
-            if (tok.getTag() == t) {
+            if (tok.getTag() == t && tok != null) {
                 System.out.println("eating: " + tok.getValor());
                 advance();
             } else {
+                System.out.println("eat esperado " + tok.getTag());
                 advance();
             }
         } catch (Exception e) {
@@ -145,12 +150,10 @@ public class Parser {
         //::= stmt ";" { stmt ";"}
         try {
             stmt();
-            while (tok.getTag() == Tag.PVG)
-            {
-                eat(Tag.PVG);
-                stmtList();
+            eat(Tag.PVG);
+            if (tok.getTag() != Tag.END) {       
+                stmtList();   
             }
-            
         } catch (Exception e) {
             error("Linha " + lexer.getLinha()
                     + " -----> Statment incorreto!");
@@ -159,29 +162,25 @@ public class Parser {
 
     private void stmt() {
         //::= assign-stmt | if-stmt | do-stmt | read-stmt | write-stmt
-        try {
-            switch (tok.getTag()) {
-                case (Tag.ID):
-                    assignStmt();
-                    break;
-                case (Tag.IF):
-                    ifStmt();
-                    break;
-                case (Tag.DO):
-                    doStmt();
-                    break;
-                case (Tag.READ):
-                    readStmt();
-                    break;
-                case (Tag.WRT):
-                    writeStmt();
-                    break;
-                default:
-                    break;
-            }
-        } catch (Exception e) {
-            error("Linha " + lexer.getLinha()
-                    + "\n -----> Statment aqui incorreto!");
+
+        switch (tok.getTag()) {
+            case (Tag.ID):
+                assignStmt();
+                break;
+            case (Tag.IF):
+                ifStmt();
+                break;
+            case (Tag.DO):
+                doStmt();
+                break;
+            case (Tag.READ):
+                readStmt();
+                break;
+            case (Tag.WRT):
+                writeStmt();
+                break;
+            default:
+                break;
         }
 
     }
@@ -309,7 +308,9 @@ public class Parser {
     private void stmtSufix() throws IOException {
         //::= while condition
         eat(Tag.WHL);
+        eat(Tag.AP);
         condition();
+        eat(Tag.FP);
     }
 
     private void identifier() {
