@@ -65,6 +65,7 @@ public class Parser {
     }
 
     void S() throws IOException {
+        //::= [ declare decl-list] start stmt-list end
         switch (tok.getTag()) {//token getTag retornar int
             case Tag.DCL:
                 eat(Tag.DCL);
@@ -82,12 +83,12 @@ public class Parser {
     }
 
     private void declList() {
+        //::= decl ";" { decl ";"}
         try {
             decl();
             eat(Tag.PVG);
             while (tok.getTag() == Tag.ID) {
                 declList();
-
             }
         } catch (Exception e) {
             error("Linha " + lexer.getLinha()
@@ -109,10 +110,10 @@ public class Parser {
 
     private void identList() throws IOException {
         //ident-list ::= identifier {"," identifier}
-        eat(Tag.ID);
+        identifier();
         while (tok.getTag() == Tag.VG) {
             eat(Tag.VG);
-            eat(Tag.ID);
+            identifier();
         }
     }
 
@@ -129,6 +130,7 @@ public class Parser {
     }
 
     private void stmtList() throws IOException {
+        //::= stmt ";" { stmt ";"}
         stmt();
         eat(Tag.PVG);
         while (tok.getTag() != Tag.END) {
@@ -137,6 +139,7 @@ public class Parser {
     }
 
     private void stmt() throws IOException {
+        //::= assign-stmt | if-stmt | do-stmt | read-stmt | write-stmt
         switch (tok.getTag()) {
             case (Tag.ID):
                 assignStmt();
@@ -161,12 +164,14 @@ public class Parser {
     }
 
     private void assignStmt() throws IOException {
+        //::= identifier "=" simple_expr
         eat(Tag.ID);
         eat(Tag.ATRB);
         simpleExpr();
     }
 
     private void simpleExpr() {
+        // simple-expr ::= term simple-exprS
         try {
             term();
             simpleExprS();
@@ -178,6 +183,7 @@ public class Parser {
     }
 
     private void simpleExprS() throws IOException {
+        //simple-exprS ::= addop term simple-exprS | λ
         if (isAddop()) {
             addop();
             term();
@@ -186,7 +192,6 @@ public class Parser {
 
     }
       private void addop() throws IOException {
-
         switch (tok.getTag()) {
             case (Tag.SUM):
                 eat(Tag.SUM);
@@ -204,6 +209,7 @@ public class Parser {
     }
 
     private void ifStmt() {
+        //if condition then stmt-list end | if condition then stmt-list else stmt-list end
         try {
             eat(Tag.IF);
             condition();
@@ -221,6 +227,7 @@ public class Parser {
     }
 
     private void doStmt() {
+        //::= do stmt-list stmt-suffix
         try {
             eat(Tag.DO);
             stmtList();
@@ -232,6 +239,7 @@ public class Parser {
     }
 
     private void readStmt() {
+        //::= read "(" identifier ")"
         try {
             eat(Tag.READ);
             eat(Tag.AP);
@@ -244,6 +252,7 @@ public class Parser {
     }
 
     private void writeStmt() {
+        //::= write "(" writable ")"
         try {
             eat(Tag.WRT);
             eat(Tag.AP);
@@ -255,29 +264,22 @@ public class Parser {
         }
     }
 
-    private void condition() {
+    private void condition() throws IOException {
         expression();
     }
 
-    private void expression() {
+    private void expression() throws IOException {
+        // simple-expr | simple-expr relop simple-expr
         simpleExpr();
         if (isRelop()) {
-            expressionE();
-        }
-
-    }
-
-    private void expressionE() {
-        try {
             relop();
             simpleExpr();
-        } catch (Exception e) {
-            error("Linha " + lexer.getLinha()
-                    + "\n -----> Expressão incorreta!");
         }
     }
 
+
     private void stmtSufix() throws IOException {
+        //::= while condition
         eat(Tag.WHL);
         condition();
     }
@@ -348,6 +350,7 @@ public class Parser {
     }
 
     private void term() {
+        //term ::= factor-a termT
         try {
             factorA();
             termT();
@@ -358,6 +361,7 @@ public class Parser {
     }
 
     private void factorA() {
+        //::= factor | ! factor | "-" factor
         try {
             if (tok.getTag() == Tag.NEG) {
                 eat(Tag.NEG);
@@ -373,11 +377,15 @@ public class Parser {
     }
 
     private void termT() throws IOException {
-        mulop();
-        factorA();
-        if (isMulop()) {
+        //termT ::== mulop factor-a termT | λ
+        if(isMulop()){
+            mulop();
+            factorA();
             termT();
+        } else {
+            
         }
+        
 
     }
 
@@ -410,9 +418,10 @@ public class Parser {
   
 
     private void factor() throws IOException {
+        //::= identifier | constant | "(" expression ")"
         switch (tok.getTag()) {
             case (Tag.ID):
-                eat(Tag.ID);
+                identifier();
                 break;
             case (Tag.AP):
                 eat(Tag.AP);
@@ -426,6 +435,7 @@ public class Parser {
     }
 
     private void constant() {
+        //::= integer_const | literal
         if (tok.getTag() == Tag.ASP) {
             literal();
         } else {
@@ -445,6 +455,7 @@ public class Parser {
     }
 
     private void integerConst() {
+        //::= digit {digit}
         try {
             eat(Tag.NUM);
         } catch (Exception e) {
