@@ -52,6 +52,8 @@ public class Parser {
             advance();
         } else {
             error("ERRO - EAT ");
+            error("Linha " + lexer.getLinha()
+                    + " -----> Token inesperado!");
             System.exit(0);
         }
     }
@@ -85,7 +87,7 @@ public class Parser {
             eat(Tag.PVG);
             while (tok.getTag() == Tag.ID) {
                 declList();
-               
+
             }
         } catch (Exception e) {
             error("Linha " + lexer.getLinha()
@@ -130,8 +132,7 @@ public class Parser {
         stmt();
         eat(Tag.PVG);
         while (tok.getTag() != Tag.END) {
-            declList();
-            eat(Tag.PVG);
+            stmtList();
         }
     }
 
@@ -166,7 +167,40 @@ public class Parser {
     }
 
     private void simpleExpr() {
-        //tirar recursividade
+        try {
+            term();
+            simpleExprS();
+        } catch (Exception e) {
+            error("Linha " + lexer.getLinha()
+                    + "\n -----> Expressão incorreta!");
+        }
+
+    }
+
+    private void simpleExprS() throws IOException {
+        if (isAddop()) {
+            addop();
+            term();
+            simpleExprS();
+        }//else = lambda
+
+    }
+      private void addop() throws IOException {
+
+        switch (tok.getTag()) {
+            case (Tag.SUM):
+                eat(Tag.SUM);
+                break;
+            case (Tag.MIN):
+                eat(Tag.MIN);
+                break;
+            case (Tag.OR):
+                eat(Tag.OR);
+                break;
+            default:
+                break;
+
+        }
     }
 
     private void ifStmt() {
@@ -222,10 +256,10 @@ public class Parser {
     }
 
     private void condition() {
-        espression();
+        expression();
     }
 
-    private void espression() {
+    private void expression() {
         simpleExpr();
         if (isRelop()) {
             expressionE();
@@ -249,7 +283,12 @@ public class Parser {
     }
 
     private void identifier() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        try {
+            eat(Tag.ID);
+        } catch (Exception e) {
+            error("Linha " + lexer.getLinha()
+                    + " -----> Identificador esperado!");
+        }
     }
 
     private void writable() {
@@ -277,7 +316,7 @@ public class Parser {
                 eat(Tag.NE);
                 break;
             default:
-
+                break;
         }
 
     }
@@ -293,6 +332,124 @@ public class Parser {
                 return true;
             default:
                 return false;
+        }
+    }
+
+    private boolean isAddop() {
+        switch (tok.getTag()) {
+            case (Tag.SUM):
+            case (Tag.MIN):
+            case (Tag.OR):
+                return true;
+            default:
+                return false;
+
+        }
+    }
+
+    private void term() {
+        try {
+            factorA();
+            termT();
+        } catch (Exception e) {
+            error("Linha " + lexer.getLinha()
+                    + "\n -----> Termo incorreto!");
+        }
+    }
+
+    private void factorA() {
+        try {
+            if (tok.getTag() == Tag.NEG) {
+                eat(Tag.NEG);
+            } else if (tok.getTag() == Tag.MIN) {
+                eat(Tag.MIN);
+            }
+            factor();
+        } catch (Exception e) {
+            error("Linha " + lexer.getLinha()
+                    + "\n -----> Fator incorreto!");
+        }
+
+    }
+
+    private void termT() throws IOException {
+        mulop();
+        factorA();
+        if (isMulop()) {
+            termT();
+        }
+
+    }
+
+    private void mulop() throws IOException {
+        switch (tok.getTag()) {
+            case (Tag.MUL):
+                eat(Tag.MUL);
+                break;
+            case (Tag.DIV):
+                eat(Tag.DIV);
+                break;
+            case (Tag.AND):
+                eat(Tag.AND);
+                break;
+            default:
+        }
+    }
+
+    private boolean isMulop() {
+        switch (tok.getTag()) {
+            case (Tag.MUL):
+            case (Tag.DIV):
+            case (Tag.AND):
+                return true;
+            default:
+                return false;
+        }
+    }
+
+  
+
+    private void factor() throws IOException {
+        switch (tok.getTag()) {
+            case (Tag.ID):
+                eat(Tag.ID);
+                break;
+            case (Tag.AP):
+                eat(Tag.AP);
+                expression();
+                eat(Tag.FP);
+                break;
+            default:
+                constant();
+                break;
+        }
+    }
+
+    private void constant() {
+        if (tok.getTag() == Tag.ASP) {
+            literal();
+        } else {
+            integerConst();
+        }
+    }
+
+    private void literal() {
+        try {
+            eat(Tag.ASP);
+            eat(Tag.LIT);
+            eat(Tag.ASP);
+        } catch (Exception e) {
+            error("Linha " + lexer.getLinha()
+                    + "\n -----> Literal incorreto!");
+        }
+    }
+
+    private void integerConst() {
+        try {
+            eat(Tag.NUM);
+        } catch (Exception e) {
+            error("Linha " + lexer.getLinha()
+                    + "\n -----> Inteiro incorreto!");
         }
     }
 }
