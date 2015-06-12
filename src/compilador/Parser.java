@@ -145,8 +145,9 @@ public class Parser {
         //::= stmt ";" { stmt ";"}
         try {
             stmt();
-            eat(Tag.PVG);
-            while (tok.getTag() != Tag.END) {
+            while (tok.getTag() == Tag.PVG)
+            {
+                eat(Tag.PVG);
                 stmtList();
             }
             
