@@ -25,9 +25,13 @@ public class Parser {
         execute();
     }
 
-    public void execute() throws IOException {
-        tok = getToken();
-        S();
+    public void execute() {
+        try {
+            tok = getToken();
+            S();
+        } catch (Exception e) {
+            error("execute");
+        }
     }
 
     public Token getToken() throws FileNotFoundException, IOException {
@@ -36,25 +40,30 @@ public class Parser {
             System.out.println('<' + tok.getValor() + ',' + tok.getTag() + '>');
             return tok;
         } else {
-            System.out.println("erro lexer");
+            System.out.println("Fim do arquivo");
             return null;
         }
 
     }
 
-    void advance() throws IOException {
-        tok = getToken();
+    void advance() {
+        try {
+            tok = getToken();
+        } catch (Exception e) {
+            System.out.println("Fim do arquivo");
+        }
     }
 
-    void eat(int t) throws IOException {
-        if (tok.getTag() == t) {
-            System.out.println("eating: " + tok.getValor());
-            advance();
-        } else {
+    void eat(int t) {
+        try {
+            if (tok.getTag() == t) {
+                System.out.println("eating: " + tok.getValor());
+                advance();
+            } else {
+                advance();
+            }
+        } catch (Exception e) {
             error("ERRO - EAT ");
-            error("Linha " + lexer.getLinha()
-                    + " -----> Token inesperado!");
-            System.exit(0);
         }
     }
 
@@ -64,21 +73,17 @@ public class Parser {
 
     }
 
-    void S() throws IOException {
+    void S() {
         //::= [ declare decl-list] start stmt-list end
-        switch (tok.getTag()) {//token getTag retornar int
-            case Tag.DCL:
-                eat(Tag.DCL);
-                declList();
-                eat(Tag.STRT);
-                stmtList();
-                eat(Tag.END);
-                break;
-
-            default:
-                error("Default S()");
-                break;
-
+        try {
+            eat(Tag.DCL);
+            declList();
+            eat(Tag.STRT);
+            stmtList();
+            eat(Tag.END);
+        } catch (Exception e) {
+            error("Linha " + lexer.getLinha()
+                    + " -----> Programa incorreto!");
         }
     }
 
@@ -96,7 +101,7 @@ public class Parser {
         }
     }
 
-    private void decl() throws IOException {
+    private void decl() {
         //decl ::= ident-list “:” type
         try {
             identList();
@@ -110,64 +115,86 @@ public class Parser {
 
     private void identList() throws IOException {
         //ident-list ::= identifier {"," identifier}
-        identifier();
-        while (tok.getTag() == Tag.VG) {
-            eat(Tag.VG);
+        try {
             identifier();
-        }
-    }
-
-    private void type() throws IOException {
-        //type ::= int | string
-        if (tok.getTag() == Tag.INT) {
-            eat(Tag.INT);
-        } else if (tok.getTag() == Tag.STRG) {
-            eat(Tag.STRG);
-        } else {
+            while (tok.getTag() == Tag.VG) {
+                eat(Tag.VG);
+                identifier();
+            }
+        } catch (Exception e) {
             error("Linha " + lexer.getLinha()
-                    + " -----> Tipo de variavel indeterminado!");
+                    + " -----> Erro de identifição!");
         }
     }
 
-    private void stmtList() throws IOException {
+    private void type() {
+        //type ::= int | string
+        try {
+            if (tok.getTag() == Tag.INT) {
+                eat(Tag.INT);
+            } else if (tok.getTag() == Tag.STRG) {
+                eat(Tag.STRG);
+            }
+        } catch (Exception e) {
+            error("Linha " + lexer.getLinha()
+                    + " -----> Tipo de variável indeterminado!");
+        }
+    }
+
+    private void stmtList() {
         //::= stmt ";" { stmt ";"}
-        stmt();
-        eat(Tag.PVG);
-        while (tok.getTag() != Tag.END) {
-            stmtList();
+        try {
+            stmt();
+            eat(Tag.PVG);
+            while (tok.getTag() != Tag.END) {
+                stmtList();
+            }
+            
+        } catch (Exception e) {
+            error("Linha " + lexer.getLinha()
+                    + " -----> Statment incorreto!");
         }
     }
 
-    private void stmt() throws IOException {
+    private void stmt() {
         //::= assign-stmt | if-stmt | do-stmt | read-stmt | write-stmt
-        switch (tok.getTag()) {
-            case (Tag.ID):
-                assignStmt();
-                break;
-            case (Tag.IF):
-                ifStmt();
-                break;
-            case (Tag.DO):
-                doStmt();
-                break;
-            case (Tag.READ):
-                readStmt();
-                break;
-            case (Tag.WRT):
-                writeStmt();
-                break;
-            default:
-                error("Linha " + lexer.getLinha()
-                        + "\n -----> Statment incorreto!");
+        try {
+            switch (tok.getTag()) {
+                case (Tag.ID):
+                    assignStmt();
+                    break;
+                case (Tag.IF):
+                    ifStmt();
+                    break;
+                case (Tag.DO):
+                    doStmt();
+                    break;
+                case (Tag.READ):
+                    readStmt();
+                    break;
+                case (Tag.WRT):
+                    writeStmt();
+                    break;
+                default:
+                    break;
+            }
+        } catch (Exception e) {
+            error("Linha " + lexer.getLinha()
+                    + "\n -----> Statment aqui incorreto!");
         }
 
     }
 
-    private void assignStmt() throws IOException {
+    private void assignStmt() {
         //::= identifier "=" simple_expr
-        eat(Tag.ID);
-        eat(Tag.ATRB);
-        simpleExpr();
+        try {
+            eat(Tag.ID);
+            eat(Tag.ATRB);
+            simpleExpr();
+        } catch (Exception e) {
+            error("Linha " + lexer.getLinha()
+                    + "\n -----> Erro de atribuição!");
+        }
     }
 
     private void simpleExpr() {
@@ -191,7 +218,8 @@ public class Parser {
         }//else = lambda
 
     }
-      private void addop() throws IOException {
+
+    private void addop() throws IOException {
         switch (tok.getTag()) {
             case (Tag.SUM):
                 eat(Tag.SUM);
@@ -276,7 +304,6 @@ public class Parser {
             simpleExpr();
         }
     }
-
 
     private void stmtSufix() throws IOException {
         //::= while condition
@@ -378,14 +405,13 @@ public class Parser {
 
     private void termT() throws IOException {
         //termT ::== mulop factor-a termT | λ
-        if(isMulop()){
+        if (isMulop()) {
             mulop();
             factorA();
             termT();
         } else {
-            
+
         }
-        
 
     }
 
@@ -415,8 +441,6 @@ public class Parser {
         }
     }
 
-  
-
     private void factor() throws IOException {
         //::= identifier | constant | "(" expression ")"
         switch (tok.getTag()) {
@@ -436,7 +460,7 @@ public class Parser {
 
     private void constant() {
         //::= integer_const | literal
-        if (tok.getTag() == Tag.ASP) {
+        if (tok.getTag() == Tag.LIT) {
             literal();
         } else {
             integerConst();
@@ -445,9 +469,8 @@ public class Parser {
 
     private void literal() {
         try {
-            eat(Tag.ASP);
             eat(Tag.LIT);
-            eat(Tag.ASP);
+
         } catch (Exception e) {
             error("Linha " + lexer.getLinha()
                     + "\n -----> Literal incorreto!");

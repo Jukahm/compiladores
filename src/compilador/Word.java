@@ -37,7 +37,7 @@ public class Word extends Token {
     public static final Word fechaParenteses = new Word(")", Tag.FP);
     public static final Word atribuicao = new Word("=", Tag.ATRB);
     public static final Word negacao = new Word("!", Tag.NEG);
-    public static final Word aspas = new Word("\"", Tag.ASP);
+  // public static final Word aspas = new Word("\"", Tag.ASP);
             
     //Construtor
     public Word (String s, int tag){

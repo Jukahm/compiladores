@@ -40,7 +40,7 @@ public class Tag {
     public final static int NUM = 288;
     public final static int ID = 289;
     public final static int NEG = 290;
-    public final static int ASP = 291;
+    //public final static int ASP = 291;
    
     //public final static int COMENT = 42;
     //Caracteres Não Especificados na Gramática

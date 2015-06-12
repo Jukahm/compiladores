@@ -150,6 +150,26 @@ public class Lexer {
 
                 }
         }
+        
+                //Literal 
+        if (ch == '“' || ch == '"') {
+            //return new Token ("\"", Tag.ASP);
+            StringBuffer w = new StringBuffer();
+            w.append(ch);
+            readch();
+            do {
+                w.append(ch);
+                readch();
+            } while ((ch != '”') && (ch != '"') && (ch != (char) -1));
+            if (ch == (char) -1) {
+                System.out.println("ERRO! String literal não finalizada!");
+                return null;
+            } else {
+                w.append(ch);
+            }
+            readch();
+            return new Token(w.toString(), Tag.LIT);
+        }
 
         //Números
         if (Character.isDigit(ch)) {
@@ -204,25 +224,7 @@ public class Lexer {
             }
             
         }
-        //Literal 
-        if (ch == '“' || ch == '"') {
 
-            StringBuffer w = new StringBuffer();
-            w.append(ch);
-            readch();
-            do {
-                w.append(ch);
-                readch();
-            } while ((ch != '”') && (ch != '"') && (ch != (char) -1));
-            if (ch == (char) -1) {
-                System.out.println("ERRO! String literal não finalizada!");
-                return null;
-            } else {
-                w.append(ch);
-            }
-            readch();
-            return new Token(w.toString(), Tag.LIT);
-        }
 
         //Caracteres não especificados
         if (ch != (char) -1) {

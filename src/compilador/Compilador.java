@@ -22,8 +22,7 @@ public static Lexer lexer;
         Parser p = new Parser("teste3");
         
     }
-   
-    
+  
 }
 
 
