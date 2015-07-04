@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package compilador;
 
 import static compilador.Compilador.lexer;
@@ -39,18 +34,28 @@ public class Parser {
         if (lexer.getEOF() != -1 && tok != null) {
             System.out.println('<' + tok.getValor() + ',' + tok.getTag() + '>');
             return tok;
-        } else {
-            //tok  = new Word ("end", Tag.END);
+        } else{
+            if(tok.tag == Tag.END){
+                eat(Tag.END);
+                System.exit(0);
+                return null;
+            }else {
+            //tok  = new Word ("end", Tag.END);              
             return null;
+        }
         }
 
     }
 
     void advance() {
         try {
-            tok = getToken();
+            tok = getToken();              
             if (tok.getTag() == Tag.NESP) {
                 System.out.println("NESP Léxico");
+                System.exit(0);
+            }
+            if (tok.getTag() == Tag.END) {
+                eat(Tag.END);
                 System.exit(0);
             }
         } catch (Exception e) {
@@ -64,7 +69,15 @@ public class Parser {
                 System.out.println("eating: " + tok.getValor());
                 advance();
             } else {
-                System.out.println("eat esperado " + tok.getTag());
+                System.out.println("Erro Sintático: na linha: " + lexer.getLinha());
+                System.out.println("Token esperado: " + String.valueOf(t) );
+                advance();
+                while(tok.getTag() != t && tok != null){
+                    System.out.println("Erro Sintático: na linha: " + lexer.getLinha());
+                System.out.println("Token esperado: " + String.valueOf(t) );
+                    advance();
+                }
+                System.out.println("eating: " + tok.getValor());
                 advance();
             }
         } catch (Exception e) {
