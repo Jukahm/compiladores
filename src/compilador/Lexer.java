@@ -53,7 +53,7 @@ public class Lexer {
         return true;
     }
 
-    public Token scan() throws IOException {
+    public Token scan() throws IOException{
         //Desconsidera delimitadores na entrada
         for (;; readch()) {
             if (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\b') {
