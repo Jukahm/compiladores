@@ -128,7 +128,7 @@ public class Lexer {
                     case ('/')://comentario de uma linha
                         while (!readch('\n'));
                         linha++;
-                        return null;
+                        return scan();
                     case ('*')://comentário de varias linhas
                         do {
                             readch();
@@ -140,7 +140,7 @@ public class Lexer {
                                 linha++;
                             } else if (ch == '*') {
                                 if (readch('/')) {
-                                    return null;
+                                    return scan();
                                 }
                             }
                         } while ((EOF != (char) -1));
