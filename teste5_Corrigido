@@ -1,14 +1,13 @@
 declare
-/*Este e um programa com*/ if
+/*Este e um programa com*/ 
 j, k: int;
-a, j: real;
+a, j: int;
 start
 read(j);
 read(k);
-if (k == 0)
-result = j/k
+if (k == 0) then
+result = j/k;
 else
-result = 0
-end;
+result = 0;
 write(res);
-end 
+end

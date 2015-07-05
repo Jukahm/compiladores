@@ -1,7 +1,6 @@
 declare
-// Um programa para calcular a maior idade
 a, b, c, maior: int;
-umavariavelcomonomemuitogrande: string;
+nomemenor: string;
 start
 read(a);
 read(b);
@@ -16,7 +15,6 @@ else
 maior = c;
 end
 end
-write(“Maior idade: ”);
+write("Maior idade: ");
 write(maior);
 end
-end 

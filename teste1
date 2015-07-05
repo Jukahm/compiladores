@@ -1,7 +1,7 @@
 program teste1
 declare
 a, b, c: int;
-result: int
+result: int;
 start
 read (a);
 read (c);

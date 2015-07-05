@@ -24,156 +24,148 @@ public class Parser {
         try {
             tok = getToken();
             S();
+            if (tok != null && lexer.getEOF() != -1) {
+                System.out.println("Erro Sintático. Código após encerramento do programa");
+            }
         } catch (Exception e) {
             error("execute");
         }
     }
 
-    public Token getToken() throws FileNotFoundException, IOException {
-        tok = lexer.scan();
-        if (lexer.getEOF() != -1 && tok != null) {
-            System.out.println('<' + tok.getValor() + ',' + tok.getTag() + '>');
-            return tok;
-        } else{
-            if(tok.tag == Tag.END){
-                eat(Tag.END);
-                System.exit(0);
-                return null;
-            }else {
-            //tok  = new Word ("end", Tag.END);              
-            return null;
-        }
-        }
-
-    }
-
-    void advance() {
+    public Token getToken() throws IOException {
         try {
-            tok = getToken();              
-            if (tok.getTag() == Tag.NESP) {
-                System.out.println("NESP Léxico");
-                System.exit(0);
-            }
-            if (tok.getTag() == Tag.END) {
-                eat(Tag.END);
-                System.exit(0);
-            }
-        } catch (Exception e) {
-            System.out.println("Fim do arquivo");
-        }
-    }
+            if (lexer.getEOF() != -1) {
+                tok = lexer.scan();
 
-    void eat(int t) {
-        try {
-            if (tok.getTag() == t && tok != null) {
-                System.out.println("eating: " + tok.getValor());
-                advance();
+                System.out.println('<' + tok.getValor() + ',' + tok.getTag() + '>');
+                return tok;
             } else {
-                System.out.println("Erro Sintático: na linha: " + lexer.getLinha());
-                System.out.println("Token esperado: " + String.valueOf(t) );
-                advance();
-                while(tok.getTag() != t && tok != null){
-                    System.out.println("Erro Sintático: na linha: " + lexer.getLinha());
-                System.out.println("Token esperado: " + String.valueOf(t) );
-                    advance();
-                }
-                System.out.println("eating: " + tok.getValor());
-                advance();
+                System.exit(0);
             }
         } catch (Exception e) {
-            error("ERRO - EAT ");
+            error("Catch getToken");
+        }
+        return null;
+    }
+
+    void eat(int t) throws IOException {
+        if (tok.getTag() == t) {
+            System.out.println("EATING: " + tok.getValor());
+            getToken();
+        } else {
+            System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Caracter esperado: " + t);
+            System.exit(0);
         }
     }
 
     void error(String str) {
         System.out.print("ERROR!!!    ");
         System.out.println(str);
-
     }
 
-    void S() {
+    void S() throws IOException {
         //::= [ declare decl-list] start stmt-list end
-        try {
-            eat(Tag.DCL);
-            declList();
-            eat(Tag.STRT);
-            stmtList();
-            eat(Tag.END);
-        } catch (Exception e) {
-            error("Linha " + lexer.getLinha()
-                    + " -----> Programa incorreto!");
-        }
-    }
-
-    private void declList() {
-        //::= decl ";" { decl ";"}
-        try {
-            decl();
-            eat(Tag.PVG);
-            while (tok.getTag() == Tag.ID) {
+        switch (tok.getTag()) {
+            case Tag.DCL:
+                eat(Tag.DCL);
                 declList();
-            }
-        } catch (Exception e) {
-            error("Linha " + lexer.getLinha()
-                    + " -----> Declaração incorreta!");
+                eat(Tag.STRT);
+                stmtList();
+                eat(Tag.END);
+                break;
+            case Tag.STRT:
+                eat(Tag.STRT);
+                stmtList();
+                eat(Tag.END);
+                break;
+            default:
+                System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Caracter esperado: Declare ou Start.");
+                System.exit(0);
         }
     }
 
-    private void decl() {
+    private void declList() throws IOException {
+        //::= decl ";" { decl ";"}
+        switch (tok.getTag()) {
+            case Tag.ID:
+                decl();
+                eat(Tag.PVG);
+                while (tok.getTag() == Tag.ID) {
+                    declList();
+                }
+                break;
+            default:
+                System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado identificador.");
+                System.exit(0);
+        }
+    }
+
+    private void decl() throws IOException {
         //decl ::= ident-list “:” type
-        try {
-            identList();
-            eat(Tag.DPTS);
-            type();
-        } catch (Exception e) {
-            error("Linha " + lexer.getLinha()
-                    + " -----> Declaração incorreta!");
+        switch (tok.getTag()) {
+            case Tag.ID:
+                identList();
+                eat(Tag.DPTS);
+                type();
+                break;
+            default:
+                System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado identificador.");
+                System.exit(0);
         }
     }
 
     private void identList() throws IOException {
         //ident-list ::= identifier {"," identifier}
-        try {
-            identifier();
-            while (tok.getTag() == Tag.VG) {
-                eat(Tag.VG);
-                identifier();
-            }
-        } catch (Exception e) {
-            error("Linha " + lexer.getLinha()
-                    + " -----> Erro de identifição!");
+        switch (tok.getTag()) {
+            case Tag.ID:
+                eat(Tag.ID);
+                while (tok.getTag() == Tag.VG) {
+                    eat(Tag.VG);
+                    eat(Tag.ID);
+                }
+                break;
+            default:
+                System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado identificador.");
+                System.exit(0);
         }
     }
 
-    private void type() {
+    private void type() throws IOException {
         //type ::= int | string
-        try {
-            if (tok.getTag() == Tag.INT) {
+        switch (tok.getTag()) {
+            case Tag.INT:
                 eat(Tag.INT);
-            } else if (tok.getTag() == Tag.STRG) {
+                break;
+            case Tag.STRG:
                 eat(Tag.STRG);
-            }
-        } catch (Exception e) {
-            error("Linha " + lexer.getLinha()
-                    + " -----> Tipo de variável indeterminado!");
+                break;
+            default:
+                System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado tipo.");
+                System.exit(0);
         }
     }
 
-    private void stmtList() {
+    private void stmtList() throws IOException {
         //::= stmt ";" { stmt ";"}
-        try {
-            stmt();
-            eat(Tag.PVG);
-            if (tok.getTag() != Tag.END) {       
-                stmtList();   
-            }
-        } catch (Exception e) {
-            error("Linha " + lexer.getLinha()
-                    + " -----> Statment incorreto!");
+        switch (tok.getTag()) {
+            case (Tag.ID):
+            case (Tag.IF):
+            case (Tag.DO):
+            case (Tag.READ):
+            case (Tag.WRT):
+                stmt();
+                eat(Tag.PVG);
+                while ((tok.getTag() == Tag.ID) || (tok.getTag() == Tag.IF) || (tok.getTag() == Tag.DO) || (tok.getTag() == Tag.READ) || (tok.getTag() == Tag.WRT)) {
+                    stmtList();
+                }
+                break;
+            default:
+                System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado identificador, if,do,read,write ou read.");
+                System.exit(0);
         }
     }
 
-    private void stmt() {
+    private void stmt() throws IOException {
         //::= assign-stmt | if-stmt | do-stmt | read-stmt | write-stmt
 
         switch (tok.getTag()) {
@@ -193,43 +185,57 @@ public class Parser {
                 writeStmt();
                 break;
             default:
-                break;
+                System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado identificador, if,do,read,write ou read.");
+                System.exit(0);
         }
 
     }
 
-    private void assignStmt() {
+    private void assignStmt() throws IOException {
         //::= identifier "=" simple_expr
-        try {
-            eat(Tag.ID);
-            eat(Tag.ATRB);
-            simpleExpr();
-        } catch (Exception e) {
-            error("Linha " + lexer.getLinha()
-                    + "\n -----> Erro de atribuição!");
+        switch (tok.getTag()) {
+            case (Tag.ID):
+                eat(Tag.ID);
+                eat(Tag.ATRB);
+                simpleExpr();
+                break;
+            default:
+                System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado identificador.");
+                System.exit(0);
         }
     }
 
-    private void simpleExpr() {
+    private void simpleExpr() throws IOException {
         // simple-expr ::= term simple-exprS
-        try {
-            term();
-            simpleExprS();
-        } catch (Exception e) {
-            error("Linha " + lexer.getLinha()
-                    + "\n -----> Expressão incorreta!");
+        switch (tok.getTag()) {
+            case (Tag.NUM):
+            case (Tag.ID):
+            case (Tag.AP):
+            case (Tag.NEG):
+            case (Tag.MIN):
+            case (Tag.LIT):
+                term();
+                simpleExprS();
+                break;
+            default:
+                System.out.println("Erro Sintático. Linha: " + Lexer.linha + ".");
+                System.exit(0);
         }
-
     }
 
     private void simpleExprS() throws IOException {
         //simple-exprS ::= addop term simple-exprS | λ
-        if (isAddop()) {
-            addop();
-            term();
-            simpleExprS();
-        }//else = lambda
-
+        switch (tok.getTag()) {
+            case (Tag.SUM):
+            case (Tag.OR):
+            case (Tag.MIN):
+                addop();
+                term();
+                simpleExprS();
+                break;
+            default:
+                break;
+        }
     }
 
     private void addop() throws IOException {
@@ -244,65 +250,81 @@ public class Parser {
                 eat(Tag.OR);
                 break;
             default:
-                break;
+                System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado caracteres: + ou - ou OR");
+                System.exit(0);
 
         }
     }
 
-    private void ifStmt() {
+    private void ifStmt() throws IOException {
         //if condition then stmt-list end | if condition then stmt-list else stmt-list end
-        try {
-            eat(Tag.IF);
-            condition();
-            eat(Tag.THEN);
-            stmtList();
-            if (tok.getTag() == Tag.ELSE) {
+        switch (tok.getTag()) {
+            case Tag.IF:
+                eat(Tag.IF);
+                condition();
+                eat(Tag.THEN);
+                stmtList();
+                ifStmt2();
+                break;
+            default:
+                System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado: 'if'");
+                System.exit(0);
+        }
+    }
+
+    private void ifStmt2() throws IOException {
+        switch (tok.getTag()) {
+            case Tag.ELSE:
                 eat(Tag.ELSE);
                 stmtList();
-            }
-            eat(Tag.END);
-        } catch (Exception e) {
-            error("Linha " + lexer.getLinha()
-                    + "\n -----> Clausula IF incorreto!");
+                eat(Tag.END);
+                break;
+            case Tag.END: eat(Tag.END);break;
+            default:
+                System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado: 'if'");
+                System.exit(0);
         }
     }
 
-    private void doStmt() {
+    private void doStmt() throws IOException {
         //::= do stmt-list stmt-suffix
-        try {
+        switch(tok.getTag()) {
+            case Tag.DO:
             eat(Tag.DO);
             stmtList();
-            stmtSufix();
-        } catch (Exception e) {
-            error("Linha " + lexer.getLinha()
-                    + "\n-----> Clausula DO incorreta!");
+            stmtSufix();break;
+            default:
+                System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado: 'do'");
+                System.exit(0);
         }
     }
 
-    private void readStmt() {
+    private void readStmt() throws IOException {
         //::= read "(" identifier ")"
-        try {
+        switch(tok.getTag()){
+            case Tag.READ:
             eat(Tag.READ);
             eat(Tag.AP);
-            identifier();
-            eat(Tag.FP);
-        } catch (Exception e) {
-            error("Linha " + lexer.getLinha()
-                    + "\n -----> READ incorreto!");
-        }
+            eat(Tag.ID);
+            eat(Tag.FP);break;
+            default:
+                System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado: 'read'");
+                System.exit(0);
+        } 
     }
 
-    private void writeStmt() {
+    private void writeStmt() throws IOException {
         //::= write "(" writable ")"
-        try {
+        switch(tok.getTag()){
+            case Tag.WRT:
             eat(Tag.WRT);
             eat(Tag.AP);
             writable();
-            eat(Tag.FP);
-        } catch (Exception e) {
-            error("Linha " + lexer.getLinha()
-                    + "\n -----> WRITE incorreto!");
-        }
+            eat(Tag.FP);break;
+            default:
+                System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado: 'write'");
+                System.exit(0);
+        } 
     }
 
     private void condition() throws IOException {
@@ -311,31 +333,41 @@ public class Parser {
 
     private void expression() throws IOException {
         // simple-expr | simple-expr relop simple-expr
-        simpleExpr();
-        if (isRelop()) {
-            relop();
-            simpleExpr();
+        switch(tok.getTag()){
+            case (Tag.NUM):
+            case (Tag.ID):
+            case (Tag.AP):
+            case (Tag.NEG):
+            case (Tag.MIN): simpleExpr();expression2();break;
+            default:
+                System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado: 'read'");
+                System.exit(0);
         }
     }
-
+    private void expression2() throws IOException {
+        switch(tok.getTag()){
+            case (Tag.EQ):
+            case (Tag.LT):
+            case (Tag.LE):
+            case (Tag.GT):
+            case (Tag.GE):
+            case (Tag.NE):relop();simpleExpr();break;
+            default:
+                break;
+        }
+    }
+    
     private void stmtSufix() throws IOException {
         //::= while condition
-        eat(Tag.WHL);
-        eat(Tag.AP);
-        condition();
-        eat(Tag.FP);
-    }
-
-    private void identifier() {
-        try {
-            eat(Tag.ID);
-        } catch (Exception e) {
-            error("Linha " + lexer.getLinha()
-                    + " -----> Identificador esperado!");
+        switch(tok.getTag()){
+            case Tag.WHL: eat(Tag.WHL);condition();break;
+            default: 
+                System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado: 'while'");
+                System.exit(0);
         }
     }
 
-    private void writable() {
+    private void writable() throws IOException {
         simpleExpr();
     }
 
@@ -360,74 +392,49 @@ public class Parser {
                 eat(Tag.NE);
                 break;
             default:
-                break;
-        }
-
-    }
-
-    private boolean isRelop() {
-        switch (tok.getTag()) {
-            case (Tag.EQ):
-            case (Tag.GT):
-            case (Tag.GE):
-            case (Tag.LT):
-            case (Tag.LE):
-            case (Tag.NE):
-                return true;
-            default:
-                return false;
+                System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado: operadores (comparação)");
+                System.exit(0);
         }
     }
 
-    private boolean isAddop() {
-        switch (tok.getTag()) {
-            case (Tag.SUM):
-            case (Tag.MIN):
-            case (Tag.OR):
-                return true;
-            default:
-                return false;
-
-        }
-    }
-
-    private void term() {
+    private void term() throws IOException {
         //term ::= factor-a termT
-        try {
-            factorA();
-            termT();
-        } catch (Exception e) {
-            error("Linha " + lexer.getLinha()
-                    + "\n -----> Termo incorreto!");
+        switch(tok.getTag()){
+           case (Tag.NUM):
+            case (Tag.ID):
+            case (Tag.AP):
+            case (Tag.NEG):
+            case (Tag.MIN): 
+            case (Tag.LIT):factorA();termT();break;
+            default:
+                System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado: 'int','id','(','-' ou '!'");
+                System.exit(0); 
         }
     }
 
-    private void factorA() {
+    private void factorA() throws IOException {
         //::= factor | ! factor | "-" factor
-        try {
-            if (tok.getTag() == Tag.NEG) {
-                eat(Tag.NEG);
-            } else if (tok.getTag() == Tag.MIN) {
-                eat(Tag.MIN);
-            }
-            factor();
-        } catch (Exception e) {
-            error("Linha " + lexer.getLinha()
-                    + "\n -----> Fator incorreto!");
+        switch(tok.getTag()){
+            case Tag.ID:    
+            case Tag.NUM:
+            case Tag.LIT: 
+            case Tag.AP: factor();break;
+            case Tag.NEG:   eat(Tag.NEG);factor();break;
+            case Tag.MIN:   eat(Tag.MIN);factor();break;
+            default:  
+                System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado: 'id','!' ou '-'");
+                System.exit(0);    
         }
-
     }
-
+        
     private void termT() throws IOException {
         //termT ::== mulop factor-a termT | λ
-        if (isMulop()) {
-            mulop();
-            factorA();
-            termT();
-        } else {
-
+        switch(tok.getTag()){
+            case Tag.MUL:
+            case Tag.DIV:
+            case Tag.AND: mulop();factorA();termT();break;
+            default: break;      
         }
-
     }
 
     private void mulop() throws IOException {
@@ -442,17 +449,8 @@ public class Parser {
                 eat(Tag.AND);
                 break;
             default:
-        }
-    }
-
-    private boolean isMulop() {
-        switch (tok.getTag()) {
-            case (Tag.MUL):
-            case (Tag.DIV):
-            case (Tag.AND):
-                return true;
-            default:
-                return false;
+                System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado: operadores.");
+                System.exit(0);
         }
     }
 
@@ -460,45 +458,18 @@ public class Parser {
         //::= identifier | constant | "(" expression ")"
         switch (tok.getTag()) {
             case (Tag.ID):
-                identifier();
+                eat(Tag.ID);
                 break;
             case (Tag.AP):
                 eat(Tag.AP);
                 expression();
                 eat(Tag.FP);
                 break;
+            case (Tag.NUM): eat(Tag.NUM);break;
+            case (Tag.LIT): eat(Tag.LIT);break;
             default:
-                constant();
-                break;
-        }
-    }
-
-    private void constant() {
-        //::= integer_const | literal
-        if (tok.getTag() == Tag.LIT) {
-            literal();
-        } else {
-            integerConst();
-        }
-    }
-
-    private void literal() {
-        try {
-            eat(Tag.LIT);
-
-        } catch (Exception e) {
-            error("Linha " + lexer.getLinha()
-                    + "\n -----> Literal incorreto!");
-        }
-    }
-
-    private void integerConst() {
-        //::= digit {digit}
-        try {
-            eat(Tag.NUM);
-        } catch (Exception e) {
-            error("Linha " + lexer.getLinha()
-                    + "\n -----> Inteiro incorreto!");
+                System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado: id, num, literal ou '('.");
+                System.exit(0);
         }
     }
 }

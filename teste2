@@ -1,5 +1,5 @@
 declare
-a: int;
+a,b: int;
 b: int;
 nome: string;
 start

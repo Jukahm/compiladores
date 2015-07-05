@@ -9,4 +9,4 @@ c = -30;
 a = 15,7;
 wr ite (a+c);
 write (" sucesso!);
-end 
+end
