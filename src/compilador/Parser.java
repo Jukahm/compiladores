@@ -208,11 +208,12 @@ public class Parser {
     private void simpleExpr() throws IOException {
         // simple-expr ::= term simple-exprS
         switch (tok.getTag()) {
-            case (Tag.INT):
+            case (Tag.NUM):
             case (Tag.ID):
             case (Tag.AP):
             case (Tag.NEG):
             case (Tag.MIN):
+            case (Tag.LIT):
                 term();
                 simpleExprS();
                 break;
@@ -321,7 +322,7 @@ public class Parser {
             writable();
             eat(Tag.FP);break;
             default:
-                System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado: 'read'");
+                System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado: 'write'");
                 System.exit(0);
         } 
     }
@@ -333,7 +334,7 @@ public class Parser {
     private void expression() throws IOException {
         // simple-expr | simple-expr relop simple-expr
         switch(tok.getTag()){
-            case (Tag.INT):
+            case (Tag.NUM):
             case (Tag.ID):
             case (Tag.AP):
             case (Tag.NEG):
@@ -391,74 +392,49 @@ public class Parser {
                 eat(Tag.NE);
                 break;
             default:
-                break;
-        }
-
-    }
-
-    private boolean isRelop() {
-        switch (tok.getTag()) {
-            case (Tag.EQ):
-            case (Tag.GT):
-            case (Tag.GE):
-            case (Tag.LT):
-            case (Tag.LE):
-            case (Tag.NE):
-                return true;
-            default:
-                return false;
+                System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado: operadores (comparação)");
+                System.exit(0);
         }
     }
 
-    private boolean isAddop() {
-        switch (tok.getTag()) {
-            case (Tag.SUM):
-            case (Tag.MIN):
-            case (Tag.OR):
-                return true;
-            default:
-                return false;
-
-        }
-    }
-
-    private void term() {
+    private void term() throws IOException {
         //term ::= factor-a termT
-        try {
-            factorA();
-            termT();
-        } catch (Exception e) {
-            error("Linha " + lexer.getLinha()
-                    + "\n -----> Termo incorreto!");
+        switch(tok.getTag()){
+           case (Tag.NUM):
+            case (Tag.ID):
+            case (Tag.AP):
+            case (Tag.NEG):
+            case (Tag.MIN): 
+            case (Tag.LIT):factorA();termT();break;
+            default:
+                System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado: 'int','id','(','-' ou '!'");
+                System.exit(0); 
         }
     }
 
-    private void factorA() {
+    private void factorA() throws IOException {
         //::= factor | ! factor | "-" factor
-        try {
-            if (tok.getTag() == Tag.NEG) {
-                eat(Tag.NEG);
-            } else if (tok.getTag() == Tag.MIN) {
-                eat(Tag.MIN);
-            }
-            factor();
-        } catch (Exception e) {
-            error("Linha " + lexer.getLinha()
-                    + "\n -----> Fator incorreto!");
+        switch(tok.getTag()){
+            case Tag.ID:    
+            case Tag.NUM:
+            case Tag.LIT: 
+            case Tag.AP: factor();break;
+            case Tag.NEG:   eat(Tag.NEG);factor();break;
+            case Tag.MIN:   eat(Tag.MIN);factor();break;
+            default:  
+                System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado: 'id','!' ou '-'");
+                System.exit(0);    
         }
-
     }
-
+        
     private void termT() throws IOException {
         //termT ::== mulop factor-a termT | λ
-        if (isMulop()) {
-            mulop();
-            factorA();
-            termT();
-        } else {
-
+        switch(tok.getTag()){
+            case Tag.MUL:
+            case Tag.DIV:
+            case Tag.AND: mulop();factorA();termT();break;
+            default: break;      
         }
-
     }
 
     private void mulop() throws IOException {
@@ -473,17 +449,8 @@ public class Parser {
                 eat(Tag.AND);
                 break;
             default:
-        }
-    }
-
-    private boolean isMulop() {
-        switch (tok.getTag()) {
-            case (Tag.MUL):
-            case (Tag.DIV):
-            case (Tag.AND):
-                return true;
-            default:
-                return false;
+                System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado: operadores.");
+                System.exit(0);
         }
     }
 
@@ -498,38 +465,11 @@ public class Parser {
                 expression();
                 eat(Tag.FP);
                 break;
+            case (Tag.NUM): eat(Tag.NUM);break;
+            case (Tag.LIT): eat(Tag.LIT);break;
             default:
-                constant();
-                break;
-        }
-    }
-
-    private void constant() {
-        //::= integer_const | literal
-        if (tok.getTag() == Tag.LIT) {
-            literal();
-        } else {
-            integerConst();
-        }
-    }
-
-    private void literal() {
-        try {
-            eat(Tag.LIT);
-
-        } catch (Exception e) {
-            error("Linha " + lexer.getLinha()
-                    + "\n -----> Literal incorreto!");
-        }
-    }
-
-    private void integerConst() {
-        //::= digit {digit}
-        try {
-            eat(Tag.NUM);
-        } catch (Exception e) {
-            error("Linha " + lexer.getLinha()
-                    + "\n -----> Inteiro incorreto!");
+                System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado: id, num, literal ou '('.");
+                System.exit(0);
         }
     }
 }

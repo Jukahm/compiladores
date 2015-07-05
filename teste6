@@ -16,5 +16,5 @@ maior = c;
 end
 end
 write("Maior idade: ");
-write(maior);
+write(maior);
 end
