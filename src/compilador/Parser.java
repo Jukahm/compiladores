@@ -116,7 +116,7 @@ public class Parser {
                 ArrayList<Word> lista = identList();
                 eat(Tag.DPTS);
                 tipo = type();
-                Semantico.setTipos(lista, tipo);
+                Semantico.setTipos(lista,tipo);
                 break;
             default:
                 System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado identificador.");
@@ -271,6 +271,8 @@ public class Parser {
             case (Tag.MIN):
                 tipo = addop();
                 tipo = Semantico.comparaTipos(tipo, term());
+                //addop();
+                //tipo = term();
                 tipo = Semantico.comparaTipos(tipo, simpleExprS());                
                 break;
             default:

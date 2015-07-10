@@ -42,9 +42,9 @@ public class Word extends Token {
     
     
     //Identificadores de Tipos de Id
-    public static final int tipoStr = 3;
-    public static final int tipoInteiro = 2;
-    public static final int tipoBooleano = 1;
+    public static final int tipoStr = 2;
+    public static final int tipoInteiro = 1;
+    public static final int tipoBooleano = 3;
     //Não definido = 0;
             
     //Construtor

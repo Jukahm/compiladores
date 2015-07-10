@@ -10,5 +10,9 @@ import java.util.*;
  * @author mariana
  */
 public class TabelaSimbolos {
-    public static HashMap words = new HashMap();
+    public static HashMap<String,Word> words = new HashMap();
+    
+    public HashMap<String,Word> getTabela(){
+        return this.words;
+    }
 }

@@ -5,7 +5,9 @@
  */
 package compilador;
 
+import static compilador.TabelaSimbolos.words;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
@@ -14,8 +16,7 @@ import java.util.ArrayList;
 public abstract class Semantico {
 
     public static void setTipo(Word tok, int tipo) {
-
-        tok.setTipo(tipo);
+        words.get(tok.getLexema()).setTipo(tipo);
     }
 
     public static void setTipos(ArrayList<Word> tokens, int tipo) {

@@ -43,7 +43,7 @@ public class Lexer {
         EOF = arquivo.read();
         ch = (char) EOF;
     }
-
+        
     private boolean readch(char c) throws IOException {
         readch();
         if (ch != c) {
