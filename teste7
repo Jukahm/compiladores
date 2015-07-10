@@ -1,14 +1,14 @@
 declare
-	i, j, k, declare: int;
+	i, j, k : int;
 start
 	i = 4 ;
-	j = *;(((*
-        tt=2;
+	j = 1 ;
+        k=2;
         write(j);
-        write(j)*/***/
+        write(j);/*
         write("Altura é demais");
-	k = i* j / k;/*
-	k = 4 + a $;
+	k = i* j / k;*/
+	k = 4 + i;
 	write(j);
-	write(k*);
+	write(k);
 end

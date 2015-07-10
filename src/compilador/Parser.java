@@ -179,9 +179,7 @@ public class Parser {
             case (Tag.READ):
             case (Tag.WRT):
                 tipo = stmt();
-                if(tipo == 0){
-                    System.out.println("Erro Semantico. Na linha: " + Lexer.linha + ". Verifique os tipos utilizados!");
-                }
+                
                 eat(Tag.PVG);
                 while ((tok.getTag() == Tag.ID) || (tok.getTag() == Tag.IF) || (tok.getTag() == Tag.DO) || (tok.getTag() == Tag.READ) || (tok.getTag() == Tag.WRT)) {
                     tipo = Semantico.comparaTipos(tipo, stmtList());
@@ -230,6 +228,9 @@ public class Parser {
             case (Tag.ID):
                 Word atr = (Word) tok;
                 tipo = atr.getTipo();
+                if(tipo == 0){
+                    error("Variável \""+tok.getValor()+"\" não declarada! ");
+                }
                 eat(Tag.ID);
                 eat(Tag.ATRB);
                 tipo = Semantico.comparaTipos(tipo,simpleExpr());
@@ -372,7 +373,7 @@ public class Parser {
                 Word aux = (Word) tok;
                 tipo = aux.getTipo();
                 if(tipo == 0){
-                    System.out.println("Veriável não existe! Linha: " + lexer.getLinha());
+                    System.out.println("Variável \""+tok.getValor()+"\" não declarada! Linha: " + lexer.getLinha());
                 }
                 eat(Tag.ID);
                 eat(Tag.FP);
@@ -591,6 +592,9 @@ public class Parser {
             case (Tag.ID):
                 Word wValue = (Word) tok;
                 tipo = wValue.getTipo();
+                if(tipo == 0){
+                    error("Veriável \""+tok.getValor()+"\" não declarada!");
+                }
                 eat(Tag.ID);
                 break;
             case (Tag.AP):

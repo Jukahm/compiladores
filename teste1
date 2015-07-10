@@ -7,4 +7,5 @@ read (c);
 b = 10;
 result = (a * c)/(b + 5 - 345);
 write(result);
+
 end

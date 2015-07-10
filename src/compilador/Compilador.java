@@ -20,7 +20,8 @@ public static Lexer lexer;
        */
         try{
             
-        Parser p = new Parser("teste1");
+        Parser p = new Parser("teste8");
+        
         }
         catch (Exception e){
             System.out.println ("Erro compilador");

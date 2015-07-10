@@ -1,10 +1,10 @@
 declare
-	i, j, k, @total, 1soma: int;
-start
-	i = 4 * (5-3 * 50 / 10;
+    i, j, k, total, soma: int;
+    start
+i = 4 * (5-3 * 50 / 10);
 	j = i * 10;
 	k = i* j / k;
-	k = 4 + a $;
+	k = 4 + 1 ;
 	write(i);
 	write(j);
 	write(k);
