@@ -1,6 +1,6 @@
 declare
 cont: int;
-media, altura, soma: int;
+media, altura, soma,qtd: int;
 start
 cont = 5;
 soma = 0;

@@ -353,10 +353,13 @@ public class Parser {
                 eat(Tag.DO);
                 int tipo1 = stmtList();
                 int tipo2 = stmtSufix();
-                if((tipo1 != 0) && (tipo2 == 3)){
+                //System.out.println("tipo2: "+tipo2);
+                if((tipo2 == 3)){
                     tipo = 3;
                 }else{
                     tipo = 0;
+                    
+                System.out.println("Falhou: "+tipo);
                 }
                 //tipo = ((stmtList() != 0) && (stmtSufix() == 3))?3:0;
                 break;
@@ -423,8 +426,11 @@ public class Parser {
             case (Tag.NEG):
             case (Tag.MIN):
                 int tipo1 = simpleExpr();
-                int tipo2 = expression2();
+                int tipo2 = expression2(tipo1);  
                 tipo = Semantico.comparaTipos(tipo1, tipo2);
+                if(tipo == 1){
+                    tipo = 3;
+                }
                 break;
             default:
                 System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado: 'read'");
@@ -434,7 +440,7 @@ public class Parser {
         return tipo;
     }
 
-    private int expression2() throws IOException {
+    private int expression2(int tipo2) throws IOException {
         int tipo;
         switch (tok.getTag()) {
             case (Tag.EQ):
@@ -447,7 +453,7 @@ public class Parser {
                 tipo = simpleExpr();
                 break;
             default:
-                tipo = 4;
+                tipo = tipo2;
                 break;
         }
         return tipo;
@@ -470,7 +476,6 @@ public class Parser {
                 tipo = 0;
                 System.exit(0);
         }
-        System.out.println("Tipo while = "+tipo);
         return tipo;
     }
 
