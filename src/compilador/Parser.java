@@ -38,7 +38,7 @@ public class Parser {
             if (lexer.getEOF() != -1) {
                 tok = lexer.scan();
 
-                System.out.println('<' + tok.getValor() + ',' + tok.getTag() + '>');
+                //System.out.println('<' + tok.getValor() + ',' + tok.getTag() + '>');
                 return tok;
             } else {
                 lexer.printTabSimbolos();
@@ -52,7 +52,7 @@ public class Parser {
 
     void eat(int t) throws IOException {
         if (tok.getTag() == t) {
-            System.out.println("EATING: " + tok.getValor());
+            //System.out.println("EATING: " + tok.getValor());
             getToken();
         } else {
             System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Caracter esperado: " + t);

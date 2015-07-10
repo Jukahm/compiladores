@@ -1,4 +1,3 @@
-program teste1
 declare
 a, b, c: int;
 result: int;
@@ -8,5 +7,4 @@ read (c);
 b = 10;
 result = (a * c)/(b + 5 - 345);
 write(result);
-teste1 = 1;
 end

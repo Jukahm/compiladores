@@ -22,7 +22,7 @@ public class Lexer {
             System.out.println("Arquivo não encontrado");
             throw e;
         }
-        
+
         tabelaReservada.put(Word.declare.getLexema(), Word.declare);
         tabelaReservada.put(Word.start.getLexema(), Word.start);
         tabelaReservada.put(Word.end.getLexema(), Word.end);
@@ -43,7 +43,7 @@ public class Lexer {
         EOF = arquivo.read();
         ch = (char) EOF;
     }
-        
+
     private boolean readch(char c) throws IOException {
         readch();
         if (ch != c) {
@@ -53,7 +53,7 @@ public class Lexer {
         return true;
     }
 
-    public Token scan() throws IOException{
+    public Token scan() throws IOException {
         //Desconsidera delimitadores na entrada
         for (;; readch()) {
             if (ch == ' ' || ch == '\t' || ch == '\r' || ch == '\b') {
@@ -150,8 +150,8 @@ public class Lexer {
 
                 }
         }
-        
-                //Literal 
+
+        //Literal 
         if (ch == '“' || ch == '"') {
             //return new Token ("\"", Tag.ASP);
             StringBuffer w = new StringBuffer();
@@ -174,10 +174,10 @@ public class Lexer {
         //Números
         if (Character.isDigit(ch)) {
             StringBuffer valor = new StringBuffer();
-                do {
-                    valor.append(ch);
-                    readch();
-                } while (Character.isDigit(ch));
+            do {
+                valor.append(ch);
+                readch();
+            } while (Character.isDigit(ch));
             if (Float.parseFloat(valor.toString()) > Integer.MAX_VALUE) {
                 System.out.println("Erro! Valor de inteiro maior que o maximo permitido");
                 return new Num(valor.toString());
@@ -198,8 +198,8 @@ public class Lexer {
                 count++;
                 readch();
             } while (Character.isLetterOrDigit(ch) && count < 20);
-            
-            if(count >= 20){
+
+            if (count >= 20) {
                 System.out.println("ERRO! Identificador excedeu o número permitido de caracteres!");
             }
             String s = sb.toString();
@@ -218,9 +218,8 @@ public class Lexer {
                 //w = new Word(s, Tag.ID);
                 return w;
             }
-            
-        }
 
+        }
 
         //Caracteres não especificados
         if (ch != (char) -1) {
@@ -255,14 +254,25 @@ public class Lexer {
         Iterator it = TabelaSimbolos.words.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
-            Word pairValue = (Word)pair.getValue();
-            System.out.println(pair.getKey() + " - " + pairValue.getTipo());
+            Word pairValue = (Word) pair.getValue();
+            int tipo = pairValue.getTipo();
+            switch (tipo) {
+                case 1:
+                    System.out.println(pair.getKey() + ".....tipo = inteiro");
+                    break;
+                case 2:
+                    System.out.println(pair.getKey() + ".....tipo = String");
+                    break;
+                default:
+                    System.out.println(pair.getKey() + ".....tipo = ???");
+                    break;
+            }
             it.remove(); // avoids a ConcurrentModificationException
         }
 
     }
 
-    public int getLinha(){
+    public int getLinha() {
         return this.linha;
     }
 }
