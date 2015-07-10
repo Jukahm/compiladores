@@ -213,6 +213,7 @@ public class Parser {
                 break;
             case (Tag.WRT):
                 tipo = writeStmt();
+                
                 break;
             default:
                 System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado identificador, if,do,read,write ou read.");
@@ -368,8 +369,12 @@ public class Parser {
             case Tag.READ:
                 eat(Tag.READ);
                 eat(Tag.AP);
+                Word aux = (Word) tok;
+                tipo = aux.getTipo();
+                if(tipo == 0){
+                    System.out.println("Veriável não existe! Linha: " + lexer.getLinha());
+                }
                 eat(Tag.ID);
-                tipo = 4;
                 eat(Tag.FP);
                 break;
             default:
@@ -395,7 +400,7 @@ public class Parser {
                 tipo = 0;
                 System.exit(0);
         }
-        return 0;
+        return tipo;
     }
 
     private int condition() throws IOException {

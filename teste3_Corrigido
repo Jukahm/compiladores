@@ -1,15 +1,12 @@
 declare
-cont: int;
-media, altura, soma: int;
+a: int;
+b: int;
+nome: string;
 start
-cont = 5;
-soma = 0;
-do  
-write(“Altura: ”);
-read (altura);
-soma = soma * altura;
-cont = cont - 1;
-while(cont);
-write(“Media: ”);
-write (soma / qtd);
+read (a);
+read (nome);
+b = a * a;
+b = b + a/2 * (3 + 5);
+write(nome);
+write(b);
 end
