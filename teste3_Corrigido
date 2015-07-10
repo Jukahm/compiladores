@@ -1,15 +1,12 @@
 declare
 cont: int;
-media, altura, soma: int;
+media, soma, altura,maior,a: int;
 start
 cont = 5;
 soma = 0;
-do  
-write(“Altura: ”);
-read (altura);
-soma = soma * altura;
-cont = cont - 1;
-while(cont);
-write(“Media: ”);
-write (soma / qtd);
+read(r);
+if ( a > (b+5)) then
+maior = a;
+else
+maior = soma;
 end

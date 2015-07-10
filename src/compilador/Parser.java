@@ -368,8 +368,12 @@ public class Parser {
             case Tag.READ:
                 eat(Tag.READ);
                 eat(Tag.AP);
+                Word aux = (Word) tok;
+                tipo = aux.getTipo();
+                if(tipo == 0){
+                    System.out.println("Veriável não existe! Linha: " + lexer.getLinha());
+                }
                 eat(Tag.ID);
-                tipo = 4;
                 eat(Tag.FP);
                 break;
             default:
