@@ -213,6 +213,7 @@ public class Parser {
                 break;
             case (Tag.WRT):
                 tipo = writeStmt();
+                
                 break;
             default:
                 System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado identificador, if,do,read,write ou read.");
@@ -399,7 +400,7 @@ public class Parser {
                 tipo = 0;
                 System.exit(0);
         }
-        return 0;
+        return tipo;
     }
 
     private int condition() throws IOException {

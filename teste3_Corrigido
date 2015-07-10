@@ -1,12 +1,12 @@
 declare
-cont: int;
-media, soma, altura,maior,a: int;
+a: int;
+b: int;
+nome: string;
 start
-cont = 5;
-soma = 0;
-read(r);
-if ( a > (b+5)) then
-maior = a;
-else
-maior = soma;
+read (a);
+read (nome);
+b = a * a;
+b = b + a/2 * (3 + 5);
+write(nome);
+write(b);
 end
