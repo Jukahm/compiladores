@@ -3,6 +3,7 @@ package compilador;
 public class Word extends Token {
     
     private String lexema = "";
+    private int tipo;
     
     //Palavras-chaves
     
@@ -38,6 +39,13 @@ public class Word extends Token {
     public static final Word atribuicao = new Word("=", Tag.ATRB);
     public static final Word negacao = new Word("!", Tag.NEG);
   // public static final Word aspas = new Word("\"", Tag.ASP);
+    
+    
+    //Identificadores de Tipos de Id
+    public static final int tipoStr = 3;
+    public static final int tipoInteiro = 2;
+    public static final int tipoBooleano = 1;
+    //Não definido = 0;
             
     //Construtor
     public Word (String s, int tag){
@@ -49,5 +57,12 @@ public class Word extends Token {
         return lexema;
     }
     
+    public int getTipo(){
+        return tipo;
+    }
+    
+    public void setTipo(int tipo){
+        this.tipo = tipo;
+    }    
    
 }

@@ -4,7 +4,7 @@ media, altura, soma: int;
 start
 cont = 5;
 soma = 0;
-do
+do  
 write(“Altura: ”);
 read (altura);
 soma = soma * altura;

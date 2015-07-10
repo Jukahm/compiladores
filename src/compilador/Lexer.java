@@ -198,11 +198,7 @@ public class Lexer {
                 count++;
                 readch();
             } while (Character.isLetterOrDigit(ch) && count < 20);
-            /*if (ch != ',' && ch != ';' && ch != ':' && ch != '(' && ch != ')' && ch != '=' && ch != '<' && ch != '>' && ch != ' ' && ch != '+' && ch != '*' && ch != '/' && ch != '-' && ch != '\t' && ch != '\r' && ch != '\b' && ch != '\n' && EOF != -1) {
-             System.out.println("ERRO - Caractere não especificado \"" + ch + "\" na linha " + linha);
-             return e_identificador(sb);
-             //readch();
-             }*/
+            
             if(count >= 20){
                 System.out.println("ERRO! Identificador excedeu o número permitido de caracteres!");
             }
@@ -239,27 +235,6 @@ public class Lexer {
         return t;
     }
 
-    //Verifica se identificador já existe em algum tabela 
-    //E insere na tabela caso seja necessário
-    /*public Word e_identificador(StringBuffer sb) {
-        String s = sb.toString();
-        Word w;
-        w = (Word) tabelaReservada.get(s);
-        if (w == null) {
-            w = (Word) TabelaSimbolos.words.get(s);
-            if (w != null) {
-                return w; //palavra já existe na HashTable
-            } else {
-                w = new Word(s, Tag.ID);
-                TabelaSimbolos.words.put(s, w);
-                return w;
-            }
-        } else {
-            w = new Word(s, Tag.ID);
-            return w;
-        }
-    }*/
-
     public int getEOF() {
         return EOF;
     }
@@ -280,7 +255,8 @@ public class Lexer {
         Iterator it = TabelaSimbolos.words.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
-            System.out.println(pair.getKey());
+            Word pairValue = (Word)pair.getValue();
+            System.out.println(pair.getKey() + " - " + pairValue.getTipo());
             it.remove(); // avoids a ConcurrentModificationException
         }
 
