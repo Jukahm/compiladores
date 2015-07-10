@@ -351,8 +351,14 @@ public class Parser {
         switch (tok.getTag()) {
             case Tag.DO:
                 eat(Tag.DO);
-                stmtList();
-                tipo = ((stmtList() != 0) && (stmtSufix() == 3))?3:0;
+                int tipo1 = stmtList();
+                int tipo2 = stmtSufix();
+                if((tipo1 != 0) && (tipo2 == 3)){
+                    tipo = 3;
+                }else{
+                    tipo = 0;
+                }
+                //tipo = ((stmtList() != 0) && (stmtSufix() == 3))?3:0;
                 break;
             default:
                 System.out.println("Erro Sintático. Linha: " + Lexer.linha + ". Esperado: 'do'");
