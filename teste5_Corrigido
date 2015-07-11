@@ -1,7 +1,7 @@
 declare
 /*Este e um programa com*/ 
 j, k: int;
-a, j: int;
+a, j,result,res: int;
 start
 read(j);
 read(k);

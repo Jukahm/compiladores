@@ -1,6 +1,5 @@
-program teste1
 declare
-a, b, c: int;
+a, b,teste1,c: int;
 result: int;
 start
 read (a);

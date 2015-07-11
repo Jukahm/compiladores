@@ -1,5 +1,5 @@
 declare
-	i, j, k, total, soma1: int;
+	i, j, k, total, soma1,a: int;
 start
 	i = 4 * (5-3 * 50 / 10);
 	j = i * 10;
