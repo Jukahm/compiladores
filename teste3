@@ -1,13 +1,14 @@
 declare
 cont: int;
 media, altura, soma: int;
+qtd: string;
 start
 cont = 5;
 soma = 0;
 do
 write(“Altura: ”);
 read (altura);
-soma = soma # altura;
+soma = soma * altura;
 cont = cont - 1;
 while(cont);
 write(“Media: ”);

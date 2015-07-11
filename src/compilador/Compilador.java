@@ -7,20 +7,10 @@ public class Compilador {
 public static Lexer lexer;
 
     public static void main(String[] args) {
-       /*Lexer lexer = new Lexer(args[0]); 
-       Token t;
-       t = lexer.scan();
-       while (lexer.getEOF() != -1){
-           if (t != null){
-           System.out.println('<'+t.getValor()+','+t.getTag()+'>');
-           }
-           t = lexer.scan();
-       }
-       lexer.printTabSimbolos();
-       */
+   
         try{
             
-        Parser p = new Parser("teste8");
+        Parser p = new Parser("teste6");
         
         }
         catch (Exception e){

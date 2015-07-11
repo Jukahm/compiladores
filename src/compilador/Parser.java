@@ -360,7 +360,6 @@ public class Parser {
                 }else{
                     tipo = 0;
                     
-                System.out.println("Falhou: "+tipo);
                 }
                 //tipo = ((stmtList() != 0) && (stmtSufix() == 3))?3:0;
                 break;
@@ -604,7 +603,7 @@ public class Parser {
                 Word wValue = (Word) tok;
                 tipo = wValue.getTipo();
                 if(tipo == 0){
-                    error("Veriável \""+tok.getValor()+"\" não declarada!");
+                    error("Variável \""+tok.getValor()+"\" não declarada!");
                 }
                 eat(Tag.ID);
                 break;
